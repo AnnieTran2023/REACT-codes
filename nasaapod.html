@@ -34,7 +34,8 @@
             return (
                 <React.Fragment>
                     <h3>NASA APOD</h3>
-
+                    <p>{data.explanation}</p>
+                    <img src={data.url} alt="image" />
                 </React.Fragment>
             )
         }
