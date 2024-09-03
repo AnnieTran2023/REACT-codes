@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>React Trivia</title>
+</head>
+
+<body>
+    <!-- Root container for react components -->
+    <div id="root"></div>
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        function Trivia() {
+
+            const [display, setDisplay] = useState("Press the button to generate a question!")
+
+            const changeQuestion = () => {
+                fetch("https://opentdb.com/api.php?amount=1")
+                    .then(response => {
+                        if (response.status === 429) {
+                            setDisplay("Please try again in a moment!")
+                            throw new Error("Rate limit exceeded!")
+                        }
+                        return response.json();
+                    })
+                    .then(responseData => {
+                        const question = responseData.results[0].question
+                        setDisplay(question)
+                    })
+                    .catch(error => console.error(error));
+
+            }
+
+            return (
+                <React.Fragment>
+                    <p>{display}</p>
+                    <button onClick={changeQuestion}>New question</button>
+                </React.Fragment>
+            )
+        }
+        const root = ReactDOM.createRoot(document.getElementById("root"));
+        root.render(<Trivia />);    
+    </script>
+</body>
+
+</html>
