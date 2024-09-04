@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Weather</title>
+</head>
+
+<body>
+    <!-- Root container for react components -->
+    <div id="root"></div>
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        function Weather() {
+            const [temp, setTemp] = useState("");
+            const [weather, setWeather] = useState("");
+            const [icon, setIcon] = useState("")
+
+            React.useEffect(() => {
+                fetch("https://api.openweathermap.org/data/2.5/weather?q=Helsinki%20&APPID=c84308a93b17784da6e322a471d7063b")
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Something went wrong! " + response.status)
+                        }
+                        return response.json()
+                    })
+                    .then(responseData => {
+                        setTemp(responseData.main.temp);
+                        setWeather(responseData.weather[0].main)
+                        setIcon(responseData.weather[0].icon)
+                    })
+                    .catch(error => console.error(error));
+            }, [])
+
+            return (
+                <React.Fragment>
+                    <h2>Weather</h2>
+                    <p>Temperature: {(temp - 273.15).toFixed(1)} Celsius</p>
+                    <p>Weather: {weather}</p>
+                    <img alt="icon" src={`https://openweathermap.org/img/wn/${icon}@2x.png`} />
+                </React.Fragment>
+            )
+
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById("root"));
+        root.render(<Weather />);    
+    </script>
+</body>
+
+</html>
