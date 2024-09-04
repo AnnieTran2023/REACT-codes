@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Weather</title>
+</head>
+
+<body>
+    <!-- Root container for react components -->
+    <div id="root"></div>
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        function Weather() {
+            const [weather, setWeather] = useState({
+                temp: "-",
+                description: "",
+                icon: "01d",
+                message: ""
+            })
+            const [city, setCity] = useState("")
+
+            const updateWeather = () => {
+                fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}%20&APPID=c84308a93b17784da6e322a471d7063b`)
+                    .then(response => {
+                        if (response.status === 404) {
+                            setWeather({ temp: "-", description: "", icon: "01d", message: "Unknown city! Try another one!" })
+                            throw new Error("Unknown data")
+                        }
+                        if (!response.ok) {
+                            throw new Error("Something went wrong! " + response.status)
+                        }
+
+                        return response.json()
+                    })
+                    .then(responseData => {
+                        setWeather({
+                            temp: (responseData.main.temp - 273.15).toFixed(1),
+                            description: responseData.weather[0].main,
+                            icon: responseData.weather[0].icon
+                        })
+                    })
+                    .catch(error => console.error(error));
+            }
+
+            return (
+                <React.Fragment>
+                    <input type="text" placeholder="Enter a city"
+                        value={city}
+                        onChange={event => setCity(event.target.value)} />
+
+                    <button onClick={updateWeather}>Get Weather</button>
+                    <p style={{ fontWeight: 'bold', color: 'red' }}>{weather.message}</p>
+                    <p>Temperature: {weather.temp} Celsius</p>
+                    <p>Weather: {weather.description}</p>
+                    <img alt="icon" src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`} />
+                    
+                </React.Fragment>
+            )
+
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById("root"));
+        root.render(<Weather />);    
+    </script>
+</body>
+
+</html>
