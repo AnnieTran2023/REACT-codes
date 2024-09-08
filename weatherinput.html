@@ -30,7 +30,7 @@
                 fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}%20&APPID=c84308a93b17784da6e322a471d7063b`)
                     .then(response => {
                         if (response.status === 404) {
-                            setWeather({ temp: "-", description: "", icon: "01d", message: "Unknown city! Try another one!" })
+                            setWeather({ temp: "-", description: "", icon: "01d", message: "Unknown city! Try another city" })
                             throw new Error("Unknown data")
                         }
                         if (!response.ok) {
@@ -43,7 +43,8 @@
                         setWeather({
                             temp: (responseData.main.temp - 273.15).toFixed(1),
                             description: responseData.weather[0].main,
-                            icon: responseData.weather[0].icon
+                            icon: responseData.weather[0].icon,
+                            message: ""
                         })
                     })
                     .catch(error => console.error(error));
@@ -57,10 +58,11 @@
 
                     <button onClick={updateWeather}>Get Weather</button>
                     <p style={{ fontWeight: 'bold', color: 'red' }}>{weather.message}</p>
+                    <h2>{city} weather</h2>
                     <p>Temperature: {weather.temp} Celsius</p>
                     <p>Weather: {weather.description}</p>
                     <img alt="icon" src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`} />
-                    
+
                 </React.Fragment>
             )
 
