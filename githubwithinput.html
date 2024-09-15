@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>React Github</title>
+    <title>Github Repos with Input</title>
 </head>
 
 <body>
@@ -16,12 +16,14 @@
 
     <script type="text/babel">
 
-        function GithubRepos() {
+        function GithubReposWithInput() {
 
             const [repos, setRepos] = React.useState([]);
+            const [userInput, setUserInput] = React.useState("");
 
-            React.useEffect(() => {
-                fetch("https://api.github.com/search/repositories?q=react")
+            const handleSearch = () => {
+                console.log(`https://api.github.com/search/repositories?q=${userInput}`)
+                fetch(`https://api.github.com/search/repositories?q=${userInput}`)
                     .then(response => {
                         if (!response.ok) {
                             throw new Error("Something went wrong!" + response.statusText);
@@ -30,11 +32,15 @@
                     })
                     .then(responseData => setRepos(responseData.items))
                     .catch(error => console.error(error))
-            }, [])
+            }
 
             return (
                 <React.Fragment>
                     <h1>Repositories</h1>
+                    <div>
+                        <input type="text" onChange={(event) => setUserInput(event.target.value)} placeholder="Type keyword..." />
+                        <button onClick={handleSearch}>Search</button>
+                    </div>
                     <table>
                         <thead>
                             <tr>
@@ -54,7 +60,7 @@
             )
         }
         const root = ReactDOM.createRoot(document.getElementById("root"));
-        root.render(<GithubRepos />);    
+        root.render(<GithubReposWithInput />);    
     </script>
 </body>
 
